@@ -13,10 +13,10 @@ final static int LOW_THRESHOLD_PORT = 1024;
 final static int HIGH_THRESHOLD_PORT = 65535;
 
 
-	/**
- 	* Main method: Iprefer tool sends packets using TCP to measure network 
- 	* bandwidth
- 	*/
+    /**
+ 	 * Main method: Iperfer tool sends packets using TCP to measure network 
+ 	 * bandwidth
+ 	 */
 	public static void main(String[] args) {
 		if(args.length>0 && args[0].equals(CLIENT_MODE) && args.length==7){
 			client(args[2],Integer.valueOf(args[4]), Double.valueOf(args[6]));
