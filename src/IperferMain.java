@@ -16,6 +16,8 @@ public class IperferMain {
 	final static String CLIENT_MODE = "-c";
 	final static String SERVER_MODE = "-s";
 	final static int SECONDS_2_NANO = 1000000000;
+	final static int Kb_2_Mb = 1000;
+	final static int MSG_SIZE = 1000;
 	final static int LOW_THRESHOLD_PORT = 1024;
 	final static int HIGH_THRESHOLD_PORT = 65535;
 	final static char[] outBuffer = new char[1000];
@@ -31,7 +33,7 @@ public class IperferMain {
 					Double.parseDouble(args[6]));
 		}
 		else if(args.length>0 && args[0].equals(SERVER_MODE) && 
-				args.length == 4){
+				args.length == 3){
 			server(Integer.valueOf(args[2]));
 		}
 		else{
@@ -87,27 +89,58 @@ public class IperferMain {
 	 * @return void
 	 */
 	private static void server(int listenPort){
+		//Check if port is within acceptable range
 		if(listenPort<LOW_THRESHOLD_PORT || listenPort>HIGH_THRESHOLD_PORT){
 			System.out.println("Error: port number must be in the range 1024 to"
 					+ " 65535");
 			System.exit(-1);
 		}
+		
+		// Local Variables 
+		int byteReceivedCount=0;
+		int byteCount=0;
+		long startTime=0;
+		long endTime =0;
+		double rate;
 
-		try{ 
+		try{
+			//Create Server socket listen for client
 			ServerSocket serverSocket = new ServerSocket(listenPort);
-			Socket clientSocket = serverSocket.accept();			 
+			Socket clientSocket = serverSocket.accept();
+			
+			//Start time used to calculate rate of transmission
+			startTime= System.nanoTime();
+			
+			//Open reader on input stream
 			BufferedReader in = new BufferedReader(new InputStreamReader(
-					clientSocket.getInputStream()));
+					clientSocket.getInputStream()), MSG_SIZE);
+
+			//count bytes transmitted
+			while( -1 != (byteCount=in.read(outBuffer, 0, MSG_SIZE-1))){
+				byteReceivedCount+=byteCount;
+			}
+			
+			//Record end time and close socket
+			endTime=System.nanoTime();
+			serverSocket.close();
 		}
 		catch(SocketTimeoutException s){
-			System.out.println("Socket timed out!");
+			System.out.println("Error: Socket timed out");
 			System.exit(-1);
 		}
 		catch(IOException e){
+			System.out.println("Error: Server IO exception");
 			e.printStackTrace();
 		}
 
-		System.out.println("sent=6543 KB rate=5.234 Mbps");		
+		//Calculate rate
+		rate = ((double) byteReceivedCount/(((double) endTime - 
+				(double) startTime) / (double) SECONDS_2_NANO)) / 
+				(double) Kb_2_Mb;
+
+		//Server output bytes received and Rate
+		System.out.println("sent=" + byteReceivedCount + " KB" + "rate=" + 
+				rate + " Mbps");		
 	}
 }
 
