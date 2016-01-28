@@ -3,8 +3,11 @@
 // Authors:          Joseph Bauer, Eric Johnson
 ///////////////////////////////////////////////////////////////////////////////
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.net.ServerSocket;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
 public class IperferMain {
@@ -69,7 +72,6 @@ final static char[] outBuffer = new char[1000];
 		
 	
 		System.out.println("sent=6543 KB rate=5.234 Mbps");
-		
 	}
 	
 	
@@ -85,6 +87,23 @@ final static char[] outBuffer = new char[1000];
 			System.out.println("Error: port number must be in the range 1024 to 65535");
 			System.exit(-1);
 		}
+		
+		try{ 
+			    ServerSocket serverSocket = new ServerSocket(listenPort);
+			    Socket clientSocket = serverSocket.accept();			 
+			    BufferedReader in = new BufferedReader(
+			        new InputStreamReader(clientSocket.getInputStream()));
+		}
+		catch(SocketTimeoutException s)
+		{
+			System.out.println("Socket timed out!");
+			System.exit(-1);
+		}
+		catch(IOException e){
+			e.printStackTrace();
+		}
+
+		System.out.println("sent=6543 KB rate=5.234 Mbps");		
 	}
 }
 
