@@ -27,9 +27,11 @@ public class IperferMain {
 	 */
 	public static void main(String[] args) {
 		if(args.length>0 && args[0].equals(CLIENT_MODE) && args.length==7){
-			client(args[2],Integer.parseInt(args[4]), Double.parseDouble(args[6]));
+			client(args[2],Integer.parseInt(args[4]), 
+					Double.parseDouble(args[6]));
 		}
-		else if(args.length>0 && args[0].equals(SERVER_MODE) && args.length == 4){
+		else if(args.length>0 && args[0].equals(SERVER_MODE) && 
+				args.length == 4){
 			server(Integer.valueOf(args[2]));
 		}
 		else{
@@ -40,7 +42,8 @@ public class IperferMain {
 
 
 	/**
-	 * Send data as quickly as possible to the server keeping track of packets sent
+	 * Send data as quickly as possible to the server keeping track of packets
+	 * sent
 	 *
 	 * @param  String hostname
 	 * @param  int serverPort
@@ -49,12 +52,12 @@ public class IperferMain {
 	 */
 	private static void client(String hostname, int serverPort, double time){
 		if(serverPort<LOW_THRESHOLD_PORT || serverPort>HIGH_THRESHOLD_PORT){
-			System.out.println("Error: port number must be in the range 1024 to 65535");
+			System.out.println("Error: port number must be in the range 1024 "
+					+ "to 65535");
 			System.exit(-1);
 		}
 
 		long startTime;
-
 
 		try{
 			Socket mySocket = new Socket(hostname, serverPort);
@@ -77,22 +80,24 @@ public class IperferMain {
 
 
 	/**
-	 * Receive data from client as quickly as possible keeping track of packets received
+	 * Receive data from client as quickly as possible keeping track of packets 
+	 * received
 	 *
 	 * @param  int listenPort
 	 * @return void
 	 */
 	private static void server(int listenPort){
 		if(listenPort<LOW_THRESHOLD_PORT || listenPort>HIGH_THRESHOLD_PORT){
-			System.out.println("Error: port number must be in the range 1024 to 65535");
+			System.out.println("Error: port number must be in the range 1024 to"
+					+ " 65535");
 			System.exit(-1);
 		}
 
 		try{ 
 			ServerSocket serverSocket = new ServerSocket(listenPort);
 			Socket clientSocket = serverSocket.accept();			 
-			BufferedReader in = new BufferedReader(
-					new InputStreamReader(clientSocket.getInputStream()));
+			BufferedReader in = new BufferedReader(new InputStreamReader(
+					clientSocket.getInputStream()));
 		}
 		catch(SocketTimeoutException s){
 			System.out.println("Socket timed out!");
