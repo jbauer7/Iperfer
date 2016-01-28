@@ -53,13 +53,17 @@ public class IperferMain {
 	 * @return void
 	 */
 	private static void client(String hostname, int serverPort, double time){
+		//Check if port is within acceptable range
 		if(serverPort<LOW_THRESHOLD_PORT || serverPort>HIGH_THRESHOLD_PORT){
 			System.out.println("Error: port number must be in the range 1024 "
 					+ "to 65535");
 			System.exit(-1);
 		}
 
+		//Local Variables
 		long startTime;
+		int bytesSentCount=0;
+		double rate;
 
 		try{
 			Socket mySocket = new Socket(hostname, serverPort);
@@ -67,7 +71,8 @@ public class IperferMain {
 
 			startTime=System.nanoTime();
 			while((System.nanoTime()-startTime) < time*SECONDS_2_NANO){
-				out.write(outBuffer);
+				out.write(outBuffer, 0, MSG_SIZE);
+				out.flush();
 			}  
 
 			mySocket.close();
@@ -76,8 +81,11 @@ public class IperferMain {
 			e.printStackTrace();
 		}
 
-
-		System.out.println("sent=6543 KB rate=5.234 Mbps");
+		//Calculate rate
+		rate = ((double) bytesSentCount / time) / (double) Kb_2_Mb;
+		
+		//Client side output
+		System.out.println("sent="+bytesSentCount+" KB rate="+rate+" Mbps");
 	}
 
 
@@ -116,7 +124,7 @@ public class IperferMain {
 					clientSocket.getInputStream()), MSG_SIZE);
 
 			//count bytes transmitted
-			while( -1 != (byteCount=in.read(outBuffer, 0, MSG_SIZE-1))){
+			while( -1 != (byteCount=in.read(outBuffer, 0, MSG_SIZE))){
 				byteReceivedCount+=byteCount;
 			}
 			
