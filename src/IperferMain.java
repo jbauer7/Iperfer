@@ -2,6 +2,10 @@
 // Title:            Iperfer
 // Authors:          Joseph Bauer, Eric Johnson
 ///////////////////////////////////////////////////////////////////////////////
+import java.net.Socket;
+import java.net.ServerSocket;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 public class IperferMain {
 	
@@ -11,6 +15,7 @@ final static String SERVER_MODE = "-s";
 final static int SECONDS_2_NANO = 1000000000;
 final static int LOW_THRESHOLD_PORT = 1024;
 final static int HIGH_THRESHOLD_PORT = 65535;
+final static char[] outBuffer = new char[1000];
 
 
     /**
@@ -19,7 +24,7 @@ final static int HIGH_THRESHOLD_PORT = 65535;
  	 */
 	public static void main(String[] args) {
 		if(args.length>0 && args[0].equals(CLIENT_MODE) && args.length==7){
-			client(args[2],Integer.valueOf(args[4]), Double.valueOf(args[6]));
+			client(args[2],Integer.parseInt(args[4]), Double.parseDouble(args[6]));
 		}
 		else if(args.length>0 && args[0].equals(SERVER_MODE) && args.length == 4){
 			server(Integer.valueOf(args[2]));
@@ -47,14 +52,22 @@ final static int HIGH_THRESHOLD_PORT = 65535;
 			System.exit(-1);
 		}
 		
-		startTime=System.nanoTime();
-		
-		while((System.nanoTime()-startTime) < time*SECONDS_2_NANO){
-			//send packets
+		try{
+			    Socket mySocket = new Socket(hostname, serverPort);
+			    PrintWriter out = new PrintWriter(mySocket.getOutputStream(), true);
+			    
+				startTime=System.nanoTime();
+				while((System.nanoTime()-startTime) < time*SECONDS_2_NANO){
+				    out.write(outBuffer);
+				}  
+			    
+			    mySocket.close();
+		}
+		catch(IOException e){
+			e.printStackTrace();
 		}
 		
-		//close connection
-		
+	
 		System.out.println("sent=6543 KB rate=5.234 Mbps");
 		
 	}
