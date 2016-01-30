@@ -4,10 +4,13 @@
 ///////////////////////////////////////////////////////////////////////////////
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.nio.ByteBuffer;
 import java.net.ServerSocket;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 
 public class IperferMain {
@@ -20,7 +23,7 @@ public class IperferMain {
 	final static int MSG_SIZE = 1000;
 	final static int LOW_THRESHOLD_PORT = 1024;
 	final static int HIGH_THRESHOLD_PORT = 65535;
-	final static char[] outBuffer = new char[1000];
+	final static byte[] outBuffer = new byte[1000];
 
 
 	/**
@@ -64,15 +67,17 @@ public class IperferMain {
 		long startTime;
 		int bytesSentCount=0;
 		double rate;
+		Socket mySocket;
+		OutputStream out;
 
 		try{
-			Socket mySocket = new Socket(hostname, serverPort);
-			PrintWriter out = new PrintWriter(mySocket.getOutputStream(), true);
-
+			 mySocket = new Socket(hostname, serverPort);
+			 out= mySocket.getOutputStream();
+			
+			
 			startTime=System.nanoTime();
 			while((System.nanoTime()-startTime) < time*SECONDS_2_NANO){
 				out.write(outBuffer, 0, MSG_SIZE);
-				out.flush();
 				bytesSentCount+=MSG_SIZE;
 			}  
 
@@ -111,18 +116,18 @@ public class IperferMain {
 		long startTime=0;
 		long endTime =0;
 		double rate;
+		ServerSocket serverSocket;
+		Socket clientSocket;
+		InputStream in;
 
 		try{
 			//Create Server socket listen for client
-			ServerSocket serverSocket = new ServerSocket(listenPort);
-			Socket clientSocket = serverSocket.accept();
-			
+			serverSocket = new ServerSocket(listenPort);
+			clientSocket = serverSocket.accept();
+			in = clientSocket.getInputStream();
 			//Start time used to calculate rate of transmission
 			startTime= System.nanoTime();
 			
-			//Open reader on input stream
-			BufferedReader in = new BufferedReader(new InputStreamReader(
-					clientSocket.getInputStream()), MSG_SIZE);
 
 			//count bytes transmitted
 			while( -1 != (byteCount=in.read(outBuffer, 0, MSG_SIZE))){
