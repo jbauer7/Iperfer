@@ -73,6 +73,7 @@ public class IperferMain {
 			while((System.nanoTime()-startTime) < time*SECONDS_2_NANO){
 				out.write(outBuffer, 0, MSG_SIZE);
 				out.flush();
+				bytesSentCount+=MSG_SIZE;
 			}  
 
 			mySocket.close();
