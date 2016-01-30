@@ -4,14 +4,10 @@
 ///////////////////////////////////////////////////////////////////////////////
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.nio.ByteBuffer;
 import java.net.ServerSocket;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 
 public class IperferMain {
 
@@ -64,32 +60,36 @@ public class IperferMain {
 		}
 
 		//Local Variables
-		long startTime;
+		long startTime=0;
+		long endTime=0;
+
 		int bytesSentCount=0;
 		double rate;
 		Socket mySocket;
 		OutputStream out;
 
 		try{
-			 mySocket = new Socket(hostname, serverPort);
-			 out= mySocket.getOutputStream();
-			
-			
-			startTime=System.nanoTime();
+			mySocket = new Socket(hostname, serverPort);
+			out = mySocket.getOutputStream();
+
+
+			startTime = System.nanoTime();
 			while((System.nanoTime()-startTime) < time*SECONDS_2_NANO){
 				out.write(outBuffer, 0, MSG_SIZE);
 				bytesSentCount+=MSG_SIZE;
 			}  
-
+			endTime = System.nanoTime();
 			mySocket.close();
 		}
 		catch(IOException e){
-			e.printStackTrace();
+			System.out.println("Error: Server IO exception");
+			System.exit(-1);
 		}
 
 		//Calculate rate
-		rate = ((double) bytesSentCount / time) / (double) Kb_2_Mb;
-		
+		rate = ((double) bytesSentCount/(((double) endTime - 
+				(double) startTime) / (double) SECONDS_2_NANO)) / 
+				(double) Kb_2_Mb;
 		//Client side output
 		System.out.println("sent="+bytesSentCount+" KB rate="+rate+" Mbps");
 	}
@@ -109,7 +109,7 @@ public class IperferMain {
 					+ " 65535");
 			System.exit(-1);
 		}
-		
+
 		// Local Variables 
 		int byteReceivedCount=0;
 		int byteCount=0;
@@ -127,13 +127,12 @@ public class IperferMain {
 			in = clientSocket.getInputStream();
 			//Start time used to calculate rate of transmission
 			startTime= System.nanoTime();
-			
 
 			//count bytes transmitted
 			while( -1 != (byteCount=in.read(outBuffer, 0, MSG_SIZE))){
 				byteReceivedCount+=byteCount;
 			}
-			
+
 			//Record end time and close socket
 			endTime=System.nanoTime();
 			serverSocket.close();
@@ -144,7 +143,7 @@ public class IperferMain {
 		}
 		catch(IOException e){
 			System.out.println("Error: Server IO exception");
-			e.printStackTrace();
+			System.exit(-1);
 		}
 
 		//Calculate rate
