@@ -59,14 +59,9 @@ public class IperferMain {
 			System.exit(-1);
 		}
 		//Local Variables
-<<<<<<< HEAD
+
 		long startTime=0;
 		long endTime=0;
-
-=======
-		long startTime = 0;
-		long endTime = 0;
->>>>>>> Corrected-Rates
 		int bytesSentCount=0;
 		int KBsent=0;
 		double timeinSecs=0;
@@ -76,7 +71,7 @@ public class IperferMain {
 
 		try{
 			mySocket = new Socket(hostname, serverPort);
-<<<<<<< HEAD
+
 			out = mySocket.getOutputStream();
 
 
@@ -85,7 +80,7 @@ public class IperferMain {
 				out.write(outBuffer, 0, MSG_SIZE);
 				bytesSentCount+=MSG_SIZE;
 			}  
-=======
+
 			out = mySocket.getOutputStream();	
 			startTime=System.nanoTime();
 			while((System.nanoTime()-startTime) < time*SECONDS_2_NANO){
@@ -93,7 +88,7 @@ public class IperferMain {
 				bytesSentCount+=MSG_SIZE;
 			}
 			out.flush();
->>>>>>> Corrected-Rates
+
 			endTime = System.nanoTime();
 			mySocket.close();
 		}
@@ -102,26 +97,12 @@ public class IperferMain {
 			System.out.println("Error: Server IO exception");
 			System.exit(-1);
 		}
-<<<<<<< HEAD
-
-		//Calculate rate
-		rate = ((double) bytesSentCount/(((double) endTime - 
-				(double) startTime) / (double) SECONDS_2_NANO)) / 
-				(double) Kb_2_Mb;
-=======
 		KBsent = bytesSentCount/1000;
 		timeinSecs=((double) endTime - (double) startTime)/SECONDS_2_NANO;
 		
-		//rate = ((double) bytesSentCount/(((double) endTime - 
-		//		(double) startTime) / (double) SECONDS_2_NANO)) / 
-		//		(double) Kb_2_Mb;
-		
 		//gets the amount of MegaBytes sent, multiplies by 8 to converts to Megabits, then divides by total time
 		rate = ((KBsent/Kb_2_Mb)*8)/timeinSecs;
-		
-		//Calculate rate
-		//rate = ((double) bytesSentCount / time) / (double) Kb_2_Mb;
->>>>>>> Corrected-Rates
+
 		//Client side output
 		System.out.println("sent=" +KBsent+ " KB " + "rate="+rate+" Mbps");
 	}
@@ -177,19 +158,15 @@ public class IperferMain {
 			System.out.println("Error: Server IO exception");
 			System.exit(-1);
 		}
+		
 		KBreceived=byteReceivedCount/1000;
 		timeinSecs=((double) endTime - (double) startTime)/SECONDS_2_NANO;
-		
-		//Calculate rate
-		//rate = ((double) byteReceivedCount/(((double) endTime - 
-		//		(double) startTime) / (double) SECONDS_2_NANO)) / 
-		//		(double) Kb_2_Mb;
 		
 		//gets the amount of MegaBytes sent, multiplies by 8 to converts to Megabits, then divides by total time
 		rate = ((KBreceived/Kb_2_Mb)*8)/timeinSecs;
 
 		//Server output bytes received and Rate
-		System.out.println("sent=" + byteReceivedCount + " KB " +"rate=" + 
+		System.out.println("sent=" + KBreceived + " KB " +"rate=" + 
 				rate + " Mbps");		
 	}
 }
