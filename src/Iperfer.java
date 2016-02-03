@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class IperferMain {
+public class Iperfer {
 
 	// Constants	
 	final static String CLIENT_MODE = "-c";
