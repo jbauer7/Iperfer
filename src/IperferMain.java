@@ -82,15 +82,6 @@ public class IperferMain {
 				out.write(outBuffer, 0, MSG_SIZE);
 				bytesSentCount+=MSG_SIZE;
 			}  
-
-			out = mySocket.getOutputStream();	
-			startTime=System.nanoTime();
-			while((System.nanoTime()-startTime) < time*SECONDS_2_NANO){
-				out.write(outBuffer, 0, MSG_SIZE);
-				bytesSentCount+=MSG_SIZE;
-			}
-			out.flush();
-
 			endTime = System.nanoTime();
 			mySocket.close();
 		}
@@ -164,8 +155,9 @@ public class IperferMain {
 		}
 		
 		KBreceived = (double) byteReceivedCount/ (double) BYTE_2_KB;
-		timeinSecs= ((double) endTime - (double) startTime) / 
-				(double) SECONDS_2_NANO;
+		timeinSecs=((double) endTime - (double) startTime) /
+				(double)SECONDS_2_NANO;
+		
 		
 		//gets the amount of MegaBytes sent, multiplies by 8 to converts to 
 		//Megabits, then divides by total time
