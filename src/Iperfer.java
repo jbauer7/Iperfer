@@ -14,6 +14,9 @@ public class Iperfer {
 	// Constants	
 	final static String CLIENT_MODE = "-c";
 	final static String SERVER_MODE = "-s";
+	final static String PORT = "-p";
+	final static String HOST = "-h";
+	final static String TIME = "-t";
 	final static int SECONDS_2_NANO = 1000000000;
 	final static int BIT_2_BYTE = 8;
 	final static int Kb_2_Mb = 1000;
@@ -22,6 +25,8 @@ public class Iperfer {
 	final static int LOW_THRESHOLD_PORT = 1024;
 	final static int HIGH_THRESHOLD_PORT = 65535;
 	final static byte[] outBuffer = new byte[1000];
+	private static boolean isClient=false;
+	private static boolean isServer=false;
 
 
 	/**
@@ -29,21 +34,70 @@ public class Iperfer {
 	 * bandwidth
 	 */
 	public static void main(String[] args) {
-		if(args.length>0 && args[0].equals(CLIENT_MODE) && args.length==7){
-			client(args[2],Integer.parseInt(args[4]), 
-					Double.parseDouble(args[6]));
+		
+		//creating local variables
+		double time = 0;
+		int port=0;
+		String host=null;
+		
+		//entry validation
+		for(int i=0; i<args.length; i++){
+			if(args[i].equals(CLIENT_MODE)){
+				isClient=true;
+				if(args.length!=7){
+					System.out.println("Incorrect number of arguments needed to operate as client");
+					System.exit(-1);
+				}
+			}
+			else if(args[i].equals(SERVER_MODE)){
+				isServer=true;
+				if(args.length!=3){
+					System.out.println("Incorrect number of arguments needed to operate as server");
+					System.exit(-1);
+				}
+			}
+			else if(args[i].equals(PORT)){
+				try{
+					port = Integer.parseInt(args[i+1]);
+				}
+				catch(NumberFormatException e){
+					System.out.println("Invalid time entry " + e);
+					System.exit(-1);
+				}
+				i++;
+			}
+			else if(args[i].equals(HOST)){
+				host=args[i+1];
+				i++;
+			}
+			else if(args[i].equals(TIME)){
+				try{
+					time=Double.parseDouble(args[i+1]);
+					i++;
+					if(time<0){
+						throw new NumberFormatException("number is negative");
+					}
+				}
+				catch(NumberFormatException e){
+						System.out.println("Invalid time entry " + e);
+						System.exit(-1);
+				}
+			}
+			else{
+				System.out.println("Invalid flag argument");
+				System.exit(-1);
+			}
 		}
-		else if(args.length>0 && args[0].equals(SERVER_MODE) && 
-				args.length == 3){
-			server(Integer.valueOf(args[2]));
+		
+		//running server or client methods
+		if(isClient){
+			client(host,port,time);
 		}
-		else{
-			System.out.println("Error: missing or additional arguments");
-			System.exit(-1);
+		if(isServer){
+			server(port);
 		}
 	}
-
-
+	
 	/**
 	 * Send data as quickly as possible to the server keeping track of packets
 	 * sent
