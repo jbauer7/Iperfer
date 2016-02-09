@@ -61,7 +61,7 @@ public class Iperfer {
 					port = Integer.parseInt(args[i+1]);
 				}
 				catch(NumberFormatException e){
-					System.out.println("Invalid time entry " + e);
+					System.out.println("Invalid port " + e);
 					System.exit(-1);
 				}
 				i++;
