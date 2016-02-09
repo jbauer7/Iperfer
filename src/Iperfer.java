@@ -219,7 +219,7 @@ public class Iperfer {
 				timeinSecs;
 
 		//Server output bytes received and Rate
-		System.out.println("sent=" + KBreceived + " KB " +"rate=" + 
+		System.out.println("received=" + KBreceived + " KB " +"rate=" + 
 				rate + " Mbps");		
 	}
 }
